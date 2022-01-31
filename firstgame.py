@@ -1,6 +1,7 @@
 # learning from https://realpython.com/pygame-a-primer/#background-and-setup
 #Import the pygame module
 import pygame
+import random
 
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
@@ -46,6 +47,24 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+            
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Enemy, self).__init__()
+        self.surf = pygame.Surface((20, 10))
+        self.surf.fill((255, 255, 255))
+        self.rect=self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )
+        self.speed = random.randin(5,20)
+        
+    def update(self):
+        self.rect.move_ip(-self.speed,0)
+        if self.rect.right < 0:
+            self.kill()
 
 #initialize pygame
 pygame.init()
