@@ -1,3 +1,4 @@
+# learning from https://realpython.com/pygame-a-primer/#background-and-setup
 #Import the pygame module
 import pygame
 
@@ -11,13 +12,8 @@ from pygame.locals import(
     K_RIGHT, 
     K_ESCAPE,
     KEYDOWN,
-    QUIT
+    QUIT,
 )
-
-pygame
-
-#initialize pygame
-pygame.init()
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 800
@@ -31,11 +27,35 @@ class Player(pygame.sprite.Sprite):
         self.surf = pygame.Surface((75, 25))
         self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect()
+    def update (self, pressed_keys):
+        if pressed_keys[K_UP]:
+            self.rect.move_ip(0, -5)
+        if pressed_keys[K_DOWN]:
+            self.rect.move_ip(0, 5)
+        if pressed_keys[K_LEFT]:
+            self.rect.move_ip(-5, 0)
+        if pressed_keys[K_RIGHT]:
+            self.rect.move_ip(5, 0)
+            
+            # Keep player on the screen
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        if self.rect.bottom >= SCREEN_HEIGHT:
+            self.rect.bottom = SCREEN_HEIGHT
 
+#initialize pygame
+pygame.init()
 
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Instantiate player. Right now, this is just a rectangle.
+player = Player()
 
 # Variable to keep the main loop running
 running = True
@@ -51,24 +71,20 @@ while running:
             #Close if the user clicked the window close button
             elif event.type == QUIT:
                 running = False
+    # Get the set of keys pressed and check for user input
+    pressed_keys = pygame.key.get_pressed()
+    
+    # Update the player sprite based on user keypresses
+    player.update(pressed_keys)
 
-    # Fill the screen with white
-    screen.fill((255, 255, 255))
+    # Fill the screen with black
+    screen.fill((0, 0, 0))
+    
+       # Draw the player on the screen
+    screen.blit(player.surf, player.rect)
+    
+    pygame.display.flip()
 
-    surf = pygame.Surface((50,50))
-    # Create a surface and pass in a tuple containing its length and width
-    surf.fill((0,0,0))
-    rect = surf.get_rect()
-
-    # Put the center of surf at the center of the display
-surf_center = (
-    (SCREEN_WIDTH-surf.get_width())/2,
-    (SCREEN_HEIGHT-surf.get_height())/2
-)
-
-
-# This line says "Draw surf onto the screen at the center"
-screen.blit(surf, surf_center)
-pygame.display.flip()
+    
 
             
